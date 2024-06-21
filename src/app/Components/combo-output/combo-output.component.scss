@@ -22,4 +22,20 @@
             font-size: 16px;
         }
     }
+
+    .custom-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-left: 4px;
+        margin-right: 4px;
+        max-width: 100px;
+        max-height: 50px;
+        min-height: 50px;
+        min-width: 50px;
+        span {
+            font-size: 30px;
+        }
+    }
 }

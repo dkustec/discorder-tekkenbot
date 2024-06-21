@@ -41,7 +41,7 @@ export class ComboTranslatorService {
     "B": `${this.basePath}bhold.png`,
     "U": `${this.basePath}uhold.png`,
     "D": `${this.basePath}dhold.png`,
-    "!": `${this.basePath}tornado.png`,
+    "!": "../../../assets/Images/tornado.png",
     "ch": "../../../assets/Images/CH.png",
     "ssl": "../../../assets/Images/SSL.png",
     "ssr": "../../../assets/Images/SSR.png",
@@ -51,6 +51,7 @@ export class ComboTranslatorService {
     " ": "../../../assets/Images/arrow.svg",
     "error": "../../../assets/Images/invalid.svg",
     "dash": "../../../assets/Images/DASH.png",
+    "delay": "../../../assets/Images/DELAY.png",
   }
 
   public imageArray = signal<string[]>([]); // Signal that will be used to update the image array in the combo-output component
@@ -59,7 +60,7 @@ export class ComboTranslatorService {
   private diagonalInputs = ["df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private numberInputs = ["1", "2", "3", "4"];
   private validDirectionConnectors = ["/"];
-  private possibleChars = ["w", "c", "s", "h", "q", "+", "/", ","]
+  private possibleChars = ["w", "c", "s", "h", "q", "+", "/", ",", "{", "}"]
   
   constructor() { }
 
@@ -88,7 +89,7 @@ export class ComboTranslatorService {
       return;
     }
 
-    let result: string[] = [];
+    const result: string[] = [];
 
     for (let i = 0; i < combo.length; i++) {
       let cur = combo[i];
@@ -119,6 +120,16 @@ export class ComboTranslatorService {
           result.push(maps["b"]);
           i += 2;
         }
+      }
+
+      if(cur === "{") { // custom command
+        let customCommand = "";
+        while (i + 1 < combo.length && combo[i + 1] !== "}") {
+          customCommand += combo[i + 1];
+          i++;
+        }
+
+        result.push(customCommand);
       }
 
       if (cur.toLowerCase() == "w") { // While Running: f, f, F
