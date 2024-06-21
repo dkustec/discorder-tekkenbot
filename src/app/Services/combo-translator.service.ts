@@ -265,9 +265,7 @@ export class ComboTranslatorService {
           result.push(maps[cur]);
         }
       } 
-    }
-    console.log(result);
-    
+    } 
     this.imageArray.set(result);
   }
 }
