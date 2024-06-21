@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ComboTranslatorService } from '../../Services/combo-translator.service';
 
@@ -12,17 +12,15 @@ import { ComboTranslatorService } from '../../Services/combo-translator.service'
 
 export class UserInputComponent {
   private _comboService;
-  userInput: string = '';
+  userInput: string = "";
   
 
   constructor(ComboTranslatorService: ComboTranslatorService) {
     this._comboService = ComboTranslatorService;
-  
   }
 
   onInput(event: any) {
     this.userInput = event.target.value;
     this._comboService.translateCombo(this.userInput);
-    
   }
 }

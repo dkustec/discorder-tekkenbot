@@ -42,6 +42,11 @@ export class ComboTranslatorService {
     "U": `${this.basePath}uhold.png`,
     "D": `${this.basePath}dhold.png`,
     "!": `${this.basePath}tornado.png`,
+    "ssl": "../../../assets/Images/SSL.png",
+    "ssr": "../../../assets/Images/SSR.png",
+    "bracketL": "../../../assets/Images/bracketl.png",
+    "bracketR": "../../../assets/Images/bracketr.png",
+    "heat": "../../../assets/Images/heat.png",
     " ": "../../../assets/Images/arrow.svg",
     "error": "../../../assets/Images/invalid.svg"
   }
@@ -51,8 +56,9 @@ export class ComboTranslatorService {
   private directionalInputs = ["f", "b", "u", "d", "F", "B", "U", "D", "df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private diagonalInputs = ["df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private numberInputs = ["1", "2", "3", "4"];
-  private validDirectionConnectors = ["+", "/"];
-  private possibleChars = ["w", "c", "+", "/", ","]
+  private validDirectionConnectors = ["/"];
+  private possibleChars = ["w", "c", "s", "h", "+", "/", ","]
+  private specialInputs = ["ssr", "ssl", "cd", "wr", "ws"]
   
   constructor() { }
 
@@ -121,7 +127,37 @@ export class ComboTranslatorService {
         }
       }
 
+      if(cur.toLowerCase() == "h") { // Heat burst
+        if(i + 1 < combo.length && combo[i + 1].toLowerCase() == "b") {
+          result.push(maps["heat"]);
+          i += 1;
+        }
+      }
+
+      if(cur.toLowerCase() == "s") { // Side step
+        if(i + 1 < combo.length && combo[i + 1].toLowerCase() == "s") {
+          if(i + 2 < combo.length && combo[i + 2].toLowerCase() == "r") {
+            result.push(maps["ssr"]);
+            i += 2;
+          } else if(i + 2 < combo.length && combo[i + 2].toLowerCase() == "l") {
+            result.push(maps["ssl"]);
+            i += 2;
+          }
+        }
+      }
+
       if(this.isNumberInput(cur)) {
+        if(i + 1 < combo.length && combo[i + 1] === "~") { // press very quickly, ex: 1~2
+          if(i + 2 < combo.length && this.isNumberInput(combo[i + 2])) {
+            result.push(maps["bracketL"]);
+            result.push(maps[cur]);
+            result.push(maps[combo[i + 2]]);
+            result.push(maps["bracketR"]);
+            i += 2;
+            continue;
+          } 
+        }
+
         let str = cur;
         let plusCount = 0;
         let isInvalid = false;
@@ -164,7 +200,7 @@ export class ComboTranslatorService {
         } else if (i + 1 < combo.length && this.isDirectionalConnector(combo[i + 1])) {
           if(i + 2 < combo.length && this.isDirectionalInput(combo[i + 2])) {
             let concat = cur + combo[i + 2];
-            
+
             i += 2;
             if (maps[concat]) {
               result.push(maps[concat]);
@@ -177,7 +213,8 @@ export class ComboTranslatorService {
         }
       } 
     }
-
+    console.log(result);
+    
     this.imageArray.set(result);
   }
 }

@@ -15,6 +15,4 @@ export class ComboOutputComponent {
   constructor(comboTranslatorService: ComboTranslatorService) {
     this._comboService = comboTranslatorService;
   }
-
-
 }
