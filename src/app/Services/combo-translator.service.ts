@@ -43,15 +43,16 @@ export class ComboTranslatorService {
     "D": `${this.basePath}dhold.png`,
     "!": `${this.basePath}tornado.png`,
     " ": "../../../assets/Images/arrow.svg",
-    "error": "../../../assets/Images/invalid.jpg"
+    "error": "../../../assets/Images/invalid.svg"
   }
 
-  public imageArray = signal<string[]>([]); // Array que será exibido na tela após a tradução da string de input
+  public imageArray = signal<string[]>([]); // Signal that will be used to update the image array in the combo-output component
 
   private directionalInputs = ["f", "b", "u", "d", "F", "B", "U", "D", "df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private diagonalInputs = ["df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private numberInputs = ["1", "2", "3", "4"];
   private validDirectionConnectors = ["+", "/"];
+  private possibleChars = ["w", "c", "+", "/", ","]
   
   constructor() { }
 
@@ -71,37 +72,35 @@ export class ComboTranslatorService {
     return this.diagonalInputs.includes(input);
   }
 
-  translateCombo(combo: string): void {
-    console.log(combo);
-
+  // TODO: break this method down into smaller functions
+  public translateCombo(combo: string): void {
     const maps = this._comboMappings;
+
     if(combo === "" || combo.length === 0) {
       this.imageArray.set([]);
       return;
-    } else if(combo.length === 1) {
-      if(!this._comboMappings[combo]) {
-        return;
-      } else {
-        this.imageArray.set([maps[combo]]);
-        return;
-      }
     }
 
     let result: string[] = [];
+
     for(let i = 0; i < combo.length; i++) {
       let cur = combo[i];
-      if (cur === " ") {
+
+      if(cur === ",") { // Ex: d, 2, 2 is valid
+        if(i + 1 < combo.length && combo[i + 1] === " ") {
+          i++;
+        }
+      }
+
+      if (cur === "n" || cur === "!" || cur === " ") {
         result.push(maps[cur]);
       }
 
-      if(cur === "!") {
-        result.push(maps[cur]);
-        continue;
+      if (!this._comboMappings[cur] && !this.possibleChars.includes(cur.toLowerCase())) {
+        result.push(maps["error"]);
       }
 
       if (cur.toLowerCase() == "w") { // While Running: f, f, F
-        console.log(cur);
-
         if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "r") { 
           result.push(maps["f"]);
           result.push(maps["f"]);
@@ -112,40 +111,43 @@ export class ComboTranslatorService {
         }
       }
 
-      if(cur.toLowerCase() == "c") {
-        if(i + 2 < combo.length && combo[i + 1].toLowerCase() == "d" && this.isNumberInput(combo[i + 2])) {
+      if(cur.toLowerCase() == "c") { // Crouch Dash: f, n, d, df
+        if(i + 1 < combo.length && combo[i + 1].toLowerCase() == "d") {
           result.push(maps["f"]);
           result.push(maps["n"]);
           result.push(maps["d"]);
           result.push(maps["df"]);
-          result.push(maps[combo[i + 2]]);
-          i += 5;
-          console.log(i);
-        } else {
-          continue;
+          i += 1;
         }
-      }
-
-      if(!this._comboMappings[cur]) {
-        continue;
       }
 
       if(this.isNumberInput(cur)) {
         let str = cur;
         let plusCount = 0;
+        let isInvalid = false;
 
-        while(i + 1 < combo.length && combo[i + 1] === "+" && plusCount <= 4 && i + 2 != combo.length) {
+        while(i + 1 < combo.length && combo[i + 1] === "+" && i + 2 != combo.length) {
           plusCount++;
+          let prev = combo[i];
           i += 2;
           str += "+" + combo[i];
-          if(Number(cur) > Number(combo[i])) {
-            result.push(maps["error"]);
+
+          if(Number(prev) > Number(combo[i])) {
+            isInvalid = true;
+            break;
+          }
+
+          if(plusCount > 3) {
+            isInvalid = true;
+            break;
           }
         }
 
-        console.log(str);
-
-        result.push(maps[str]);
+        if(isInvalid) {
+          result.push(maps["error"]);
+        } else {
+          result.push(maps[str]);
+        }
       }
 
       if(this.isDirectionalInput(cur)) {
@@ -162,21 +164,19 @@ export class ComboTranslatorService {
         } else if (i + 1 < combo.length && this.isDirectionalConnector(combo[i + 1])) {
           if(i + 2 < combo.length && this.isDirectionalInput(combo[i + 2])) {
             let concat = cur + combo[i + 2];
+            
             i += 2;
             if (maps[concat]) {
               result.push(maps[concat]);
             } else {
               result.push(maps[cur]);
             }
-          } else {
-            result.push(maps[cur]);
           }
+        } else {
+          result.push(maps[cur]);
         }
-      }
+      } 
     }
-
-    console.log(result);
-    
 
     this.imageArray.set(result);
   }
