@@ -42,13 +42,15 @@ export class ComboTranslatorService {
     "U": `${this.basePath}uhold.png`,
     "D": `${this.basePath}dhold.png`,
     "!": `${this.basePath}tornado.png`,
+    "ch": "../../../assets/Images/CH.png",
     "ssl": "../../../assets/Images/SSL.png",
     "ssr": "../../../assets/Images/SSR.png",
     "bracketL": "../../../assets/Images/bracketl.png",
     "bracketR": "../../../assets/Images/bracketr.png",
     "heat": "../../../assets/Images/heat.png",
     " ": "../../../assets/Images/arrow.svg",
-    "error": "../../../assets/Images/invalid.svg"
+    "error": "../../../assets/Images/invalid.svg",
+    "dash": "../../../assets/Images/DASH.png",
   }
 
   public imageArray = signal<string[]>([]); // Signal that will be used to update the image array in the combo-output component
@@ -57,8 +59,7 @@ export class ComboTranslatorService {
   private diagonalInputs = ["df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private numberInputs = ["1", "2", "3", "4"];
   private validDirectionConnectors = ["/"];
-  private possibleChars = ["w", "c", "s", "h", "+", "/", ","]
-  private specialInputs = ["ssr", "ssl", "cd", "wr", "ws"]
+  private possibleChars = ["w", "c", "s", "h", "q", "+", "/", ","]
   
   constructor() { }
 
@@ -82,18 +83,18 @@ export class ComboTranslatorService {
   public translateCombo(combo: string): void {
     const maps = this._comboMappings;
 
-    if(combo === "" || combo.length === 0) {
+    if (combo === "" || combo.length === 0) {
       this.imageArray.set([]);
       return;
     }
 
     let result: string[] = [];
 
-    for(let i = 0; i < combo.length; i++) {
+    for (let i = 0; i < combo.length; i++) {
       let cur = combo[i];
 
-      if(cur === ",") { // Ex: d, 2, 2 is valid
-        if(i + 1 < combo.length && combo[i + 1] === " ") {
+      if (cur === ",") { // Ex: d, 2, 2 is valid
+        if (i + 1 < combo.length && combo[i + 1] === " ") {
           i++;
         }
       }
@@ -104,6 +105,20 @@ export class ComboTranslatorService {
 
       if (!this._comboMappings[cur] && !this.possibleChars.includes(cur.toLowerCase())) {
         result.push(maps["error"]);
+      }
+
+      if (cur.toLowerCase() === "q") { // Quarter circle
+        if (combo.substring(i, i + 3).toLowerCase() === "qcf") {
+          result.push(maps["d"]);
+          result.push(maps["df"]);
+          result.push(maps["f"]);
+          i += 2;
+        } else if (combo.substring(i, i + 3).toLowerCase() === "qcb") {
+          result.push(maps["d"]);
+          result.push(maps["db"]);
+          result.push(maps["b"]);
+          i += 2;
+        }
       }
 
       if (cur.toLowerCase() == "w") { // While Running: f, f, F
@@ -117,26 +132,53 @@ export class ComboTranslatorService {
         }
       }
 
-      if(cur.toLowerCase() == "c") { // Crouch Dash: f, n, d, df
-        if(i + 1 < combo.length && combo[i + 1].toLowerCase() == "d") {
+      if (cur.toLowerCase() == "c") { // Crouch Dash: f, n, d, df
+        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "d") {
           result.push(maps["f"]);
           result.push(maps["n"]);
           result.push(maps["d"]);
           result.push(maps["df"]);
           i += 1;
-        }
-      }
-
-      if(cur.toLowerCase() == "h") { // Heat burst
-        if(i + 1 < combo.length && combo[i + 1].toLowerCase() == "b") {
-          result.push(maps["heat"]);
+        } else if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "h") {
+          result.push(maps["ch"]);
           i += 1;
         }
       }
 
-      if(cur.toLowerCase() == "s") { // Side step
-        if(i + 1 < combo.length && combo[i + 1].toLowerCase() == "s") {
-          if(i + 2 < combo.length && combo[i + 2].toLowerCase() == "r") {
+      if (cur.toLowerCase() == "h") { // Heat burst | HCB | HCF
+        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "b") {
+          result.push(maps["heat"]);
+          i += 1;
+        } else if (combo.substring(i, i + 3).toLowerCase() == "hcb") {
+          result.push(maps["f"]);
+          result.push(maps["df"]);
+          result.push(maps["d"]);
+          result.push(maps["db"]);
+          result.push(maps["b"]);
+          i += 2;
+          continue;
+        } else if (combo.substring(i, i + 3).toLowerCase() == "hcf") {
+          result.push(maps["b"]);
+          result.push(maps["db"]);
+          result.push(maps["d"]);
+          result.push(maps["df"]);
+          result.push(maps["f"]);
+          i += 2;
+          continue;
+        }
+      }
+
+      if (cur.toLowerCase() == "d") { // Dash
+        if (combo.substring(i, i + 4).toLowerCase() == "dash") {
+          result.push(maps["dash"]);
+          i += 3;
+          continue;
+        }
+      }
+
+      if (cur.toLowerCase() == "s") { // Side step
+        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "s") {
+          if (i + 2 < combo.length && combo[i + 2].toLowerCase() == "r") {
             result.push(maps["ssr"]);
             i += 2;
           } else if(i + 2 < combo.length && combo[i + 2].toLowerCase() == "l") {
@@ -146,9 +188,9 @@ export class ComboTranslatorService {
         }
       }
 
-      if(this.isNumberInput(cur)) {
-        if(i + 1 < combo.length && combo[i + 1] === "~") { // press very quickly, ex: 1~2
-          if(i + 2 < combo.length && this.isNumberInput(combo[i + 2])) {
+      if (this.isNumberInput(cur)) {
+        if (i + 1 < combo.length && combo[i + 1] === "~") { // press very quickly, ex: 1~2
+          if (i + 2 < combo.length && this.isNumberInput(combo[i + 2])) {
             result.push(maps["bracketL"]);
             result.push(maps[cur]);
             result.push(maps[combo[i + 2]]);
@@ -162,35 +204,35 @@ export class ComboTranslatorService {
         let plusCount = 0;
         let isInvalid = false;
 
-        while(i + 1 < combo.length && combo[i + 1] === "+" && i + 2 != combo.length) {
+        while (i + 1 < combo.length && combo[i + 1] === "+" && i + 2 != combo.length) {
           plusCount++;
           let prev = combo[i];
           i += 2;
           str += "+" + combo[i];
 
-          if(Number(prev) > Number(combo[i])) {
+          if (Number(prev) > Number(combo[i])) {
             isInvalid = true;
             break;
           }
 
-          if(plusCount > 3) {
+          if (plusCount > 3) {
             isInvalid = true;
             break;
           }
         }
 
-        if(isInvalid) {
+        if (isInvalid) {
           result.push(maps["error"]);
         } else {
           result.push(maps[str]);
         }
       }
 
-      if(this.isDirectionalInput(cur)) {
-        if(i + 1 < combo.length && this.isDirectionalInput(combo[i + 1])) {
+      if (this.isDirectionalInput(cur)) {
+        if (i + 1 < combo.length && this.isDirectionalInput(combo[i + 1])) {
           let concat = cur + combo[i + 1];
           
-          if(this.isDiagonalInput(concat)) {
+          if (this.isDiagonalInput(concat)) {
             result.push(maps[concat]);
           } else {
             result.push(maps[cur]);
@@ -198,7 +240,7 @@ export class ComboTranslatorService {
           }
           i++;
         } else if (i + 1 < combo.length && this.isDirectionalConnector(combo[i + 1])) {
-          if(i + 2 < combo.length && this.isDirectionalInput(combo[i + 2])) {
+          if (i + 2 < combo.length && this.isDirectionalInput(combo[i + 2])) {
             let concat = cur + combo[i + 2];
 
             i += 2;
