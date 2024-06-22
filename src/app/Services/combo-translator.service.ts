@@ -53,6 +53,8 @@ export class ComboTranslatorService {
     "error": "../../../assets/Images/invalid.svg",
     "dash": "../../../assets/Images/DASH.png",
     "delay": "../../../assets/Images/DELAY.png",
+    "ws": "../../../assets/Images/ws.png",
+    "iws": "../../../assets/Images/iWS.png",
   }
 
   public imageArray = signal<string[]>([]); // Signal that will be used to update the image array in the combo-output component
@@ -61,7 +63,7 @@ export class ComboTranslatorService {
   private diagonalInputs = ["df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private numberInputs = ["1", "2", "3", "4"];
   private validDirectionConnectors = ["/"];
-  private possibleChars = ["w", "c", "s", "h", "q", "+", "/", ",", "{", "}"]
+  private possibleChars = ["w", "c", "s", "h", "q", "i", "+", "/", ",", "{", "}"]
   
   constructor() { }
 
@@ -109,6 +111,15 @@ export class ComboTranslatorService {
         result.push(maps["error"]);
       }
 
+      if (cur.toLowerCase() == "i") { // Instant While Standing
+        if (combo.substring(i, i + 3).toLowerCase() == "iws") {
+          result.push(maps["iws"]);
+          i += 2;
+        } else {
+          result.push(maps["error"]);
+        }
+      }
+
       if (cur.toLowerCase() === "q") { // Quarter circle
         if (combo.substring(i, i + 3).toLowerCase() === "qcf") {
           result.push(maps["d"]);
@@ -133,11 +144,14 @@ export class ComboTranslatorService {
         result.push(customCommand);
       }
 
-      if (cur.toLowerCase() == "w") { // While Running: f, f, F
-        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "r") { 
+      if (cur.toLowerCase() == "w") { 
+        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "r") { // While Running: f, f, F
           result.push(maps["f"]);
           result.push(maps["f"]);
           result.push(maps["F"]);
+          i++;
+        } else if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "s") { // While Standing
+          result.push(maps["ws"]);
           i++;
         } else {
           continue;
@@ -203,8 +217,6 @@ export class ComboTranslatorService {
           result.push(maps["ss"]);
           i += 1;
         } 
-        
-        
       }
 
       if (this.isNumberInput(cur)) {
