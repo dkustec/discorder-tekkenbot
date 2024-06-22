@@ -7,7 +7,7 @@
     
     input {
         padding: 12px;
-        width: 35%;
+        width: 40%;
         font-size: large;
         border: 1px solid #000000;
     }
@@ -18,5 +18,11 @@
 
     img:hover {
         cursor: pointer;
+    }
+
+    @media screen and (max-width: 768px) {
+        input {
+            width: 70%;
+        }
     }
 }

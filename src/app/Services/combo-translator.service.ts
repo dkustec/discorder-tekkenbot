@@ -41,6 +41,7 @@ export class ComboTranslatorService {
     "B": `${this.basePath}bhold.png`,
     "U": `${this.basePath}uhold.png`,
     "D": `${this.basePath}dhold.png`,
+    // global commands
     "!": "../../../assets/Images/tornado.png",
     "ch": "../../../assets/Images/CH.png",
     "ss": "../../../assets/Images/SS.png",

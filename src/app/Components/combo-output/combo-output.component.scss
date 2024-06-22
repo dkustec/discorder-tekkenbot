@@ -38,4 +38,20 @@
             font-size: 30px;
         }
     }
+
+    @media screen and (max-width: 768px) {
+        .img-card {
+            max-width: 30px;
+            max-height: 30px;
+        }
+
+        .error-container {
+            max-width: 30px;
+            max-height: 30px;
+
+            span {
+                font-size: 12px;
+            }
+        }
+    }
 }
