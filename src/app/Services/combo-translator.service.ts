@@ -205,7 +205,13 @@ export class ComboTranslatorService {
           }
         } else if (specialInput.length === 1 && !this.directionalInputs.includes(specialInput[0])) {
           result.push(maps[specialInput[0]]);
+        }
 
+        console.log(specialInput);
+        
+
+        if (specialInput[0].length > 1 && this.isDirectionalInput(specialInput[0][0])) {
+          continue;
         }
       }
 
