@@ -76,7 +76,7 @@ export class ComboTranslatorService {
     "ssr": ["ssr"],
     "ss": ["ss"],
     "ch": ["ch"],
-    "heat": ["heat"],
+    "hb": ["heat"],
     // multiple inputs
     "wr": ["f", "f", "F"],
     "cd": ["f", "n", "d", "df"],
@@ -205,6 +205,7 @@ export class ComboTranslatorService {
           }
         } else if (this.possibleSpecialInputs.includes(specialInput[0])) {
           result.push(maps[specialInput[0]]);
+          continue;
         }
       }
 
