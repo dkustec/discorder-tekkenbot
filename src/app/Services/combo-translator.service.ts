@@ -56,6 +56,7 @@ export class ComboTranslatorService {
     "delay": "../../../assets/Images/DELAY.png",
     "ws": "../../../assets/Images/ws.png",
     "iws": "../../../assets/Images/iWS.png",
+    "bt": "../../../assets/Images/BT.png",
   }
 
   public imageArray = signal<string[]>([]); // Signal that will be used to update the image array in the combo-output component
@@ -119,6 +120,14 @@ export class ComboTranslatorService {
         } else {
           result.push(maps["error"]);
         }
+      }
+
+      if (cur.toLowerCase() === "b") {
+        if (i + 1 < combo.length && combo[i + 1].toLowerCase() === "t") {
+          result.push(maps["bt"]);
+          i += 1;
+          continue;
+        } 
       }
 
       if (cur.toLowerCase() === "q") { // Quarter circle
