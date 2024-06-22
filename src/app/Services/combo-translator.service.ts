@@ -43,6 +43,7 @@ export class ComboTranslatorService {
     "D": `${this.basePath}dhold.png`,
     "!": "../../../assets/Images/tornado.png",
     "ch": "../../../assets/Images/CH.png",
+    "ss": "../../../assets/Images/SS.png",
     "ssl": "../../../assets/Images/SSL.png",
     "ssr": "../../../assets/Images/SSR.png",
     "bracketL": "../../../assets/Images/bracketl.png",
@@ -188,15 +189,22 @@ export class ComboTranslatorService {
       }
 
       if (cur.toLowerCase() == "s") { // Side step
-        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "s") {
-          if (i + 2 < combo.length && combo[i + 2].toLowerCase() == "r") {
-            result.push(maps["ssr"]);
-            i += 2;
-          } else if(i + 2 < combo.length && combo[i + 2].toLowerCase() == "l") {
-            result.push(maps["ssl"]);
-            i += 2;
-          }
+        if (combo.substring(i, i + 3).toLowerCase() == "ssl") {
+          result.push(maps["ssl"]);
+          i += 2;
         }
+
+        if (combo.substring(i, i + 3).toLowerCase() == "ssr") {
+          result.push(maps["ssr"]);
+          i += 2;
+        }
+        
+        if (i + 1 < combo.length && combo[i + 1].toLowerCase() == "s") {
+          result.push(maps["ss"]);
+          i += 1;
+        } 
+        
+        
       }
 
       if (this.isNumberInput(cur)) {
