@@ -197,8 +197,11 @@ export class ComboTranslatorService {
       }
 
       if (this.isPossibleSpecialInput(cur.toLowerCase())) {
-        let [specialInput, offset] = this.handleSpecialInputs(combo.substring(i), i, cur.toLowerCase());
+        let [specialInput, offset] = this.handleSpecialInputs(combo.substring(i).toLowerCase(), i, cur.toLowerCase());
         i += offset;
+
+        console.log(specialInput);
+        
 
         if (specialInput.length > 1) {
           for (let j = 0; j < specialInput.length; j++) {

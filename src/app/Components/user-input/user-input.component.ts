@@ -29,8 +29,6 @@ export class UserInputComponent implements OnInit{
 
       if (combo) {
         this.userInput = combo;
-        console.log(combo);
-        
       }
     });
   }
