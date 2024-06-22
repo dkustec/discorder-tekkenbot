@@ -11,4 +11,12 @@
         font-size: large;
         border: 1px solid #000000;
     }
+
+    img {
+        margin-left: 10px;
+    }
+
+    img:hover {
+        cursor: pointer;
+    }
 }

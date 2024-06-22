@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ComboTranslatorService } from '../../Services/combo-translator.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-input',
@@ -22,5 +23,14 @@ export class UserInputComponent {
   onInput(event: any) {
     this.userInput = event.target.value;
     this._comboService.translateCombo(this.userInput);
+  }
+
+  onShareButtonClick() {
+    Swal.fire("Copied to clipboard!");
+
+    let normalizedToUrl = this.userInput.replace(/ /g, "%20");
+    let url = `https://tekkenconverter.netlify.app?combo=${normalizedToUrl}`;
+    
+    navigator.clipboard.writeText(url);
   }
 }
