@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ComboTranslatorService } from '../../Services/combo-translator.service';
 import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-input',
@@ -11,14 +12,27 @@ import Swal from 'sweetalert2';
   styleUrl: './user-input.component.scss'
 })
 
-export class UserInputComponent {
+export class UserInputComponent implements OnInit{
   private _comboService;
   userInput: string = "";
+  _activatedRoute;
   
 
-  constructor(ComboTranslatorService: ComboTranslatorService) {
+  constructor(ComboTranslatorService: ComboTranslatorService, route: ActivatedRoute) {
     this._comboService = ComboTranslatorService;
+    this._activatedRoute = route;
   }
+
+  ngOnInit(): void {
+    this._activatedRoute.queryParams.subscribe(params => {
+      const combo = params['combo'];
+
+      if (combo) {
+        this.userInput = combo;
+      }
+    });
+  }
+
 
   onInput(event: any) {
     this.userInput = event.target.value;
