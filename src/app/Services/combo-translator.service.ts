@@ -207,9 +207,6 @@ export class ComboTranslatorService {
           result.push(maps[specialInput[0]]);
         }
 
-        console.log(specialInput);
-        
-
         if (specialInput[0].length > 1 && this.isDirectionalInput(specialInput[0][0])) {
           continue;
         }
