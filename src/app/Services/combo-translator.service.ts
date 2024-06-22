@@ -49,7 +49,7 @@ export class ComboTranslatorService {
     "ssr": "../../../assets/Images/SSR.png",
     "bracketL": "../../../assets/Images/bracketl.png",
     "bracketR": "../../../assets/Images/bracketr.png",
-    "heat": "../../../assets/Images/heat.png",
+    "hb": "../../../assets/Images/heat.png",
     " ": "../../../assets/Images/arrow.svg",
     "error": "../../../assets/Images/invalid.svg",
     "dash": "../../../assets/Images/DASH.png",
@@ -66,7 +66,7 @@ export class ComboTranslatorService {
   private numberInputs = ["1", "2", "3", "4"];
   private validDirectionConnectors = ["/"];
   private possibleChars = ["w", "c", "s", "h", "q", "i", "+", "/", ",", "{", "}"]
-  private possibleSpecialInputs = ["ws", "iws", "bt", "dash", "ssl", "ssr", "ss", "ch", "heat", "wr", "cd", "qcf", "qcb", "hcb", "hcf"];
+  private possibleSpecialInputs = ["ws", "iws", "bt", "dash", "ssl", "ssr", "ss", "ch", "hb", "wr", "cd", "qcf", "qcb", "hcb", "hcf"];
   private specialInputsMappings: { [key: string]: string[] } = {
     "ws": ["ws"],
     "iws": ["iws"],
@@ -76,7 +76,7 @@ export class ComboTranslatorService {
     "ssr": ["ssr"],
     "ss": ["ss"],
     "ch": ["ch"],
-    "hb": ["heat"],
+    "hb": ["hb"],
     // multiple inputs
     "wr": ["f", "f", "F"],
     "cd": ["f", "n", "d", "df"],
@@ -86,7 +86,6 @@ export class ComboTranslatorService {
     "hcf": ["b", "db", "d", "df", "f"]
   };
 
-  
   constructor() { }
 
   private isDirectionalInput(input: string): boolean {
@@ -160,6 +159,8 @@ export class ComboTranslatorService {
       }
     }
 
+    result = result.toLowerCase();
+
     if(this.specialInputsMappings[result]) {
       return [this.specialInputsMappings[result], indexOffset];
     } else {
@@ -205,6 +206,7 @@ export class ComboTranslatorService {
           }
         } else if (this.possibleSpecialInputs.includes(specialInput[0])) {
           result.push(maps[specialInput[0]]);
+          
           continue;
         }
       }
@@ -281,11 +283,8 @@ export class ComboTranslatorService {
           result.push(maps[str]);
         }
       }
-
-      
-      
     } 
-
+    
     this.imageArray.set(result);
   }
 }
