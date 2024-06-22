@@ -203,12 +203,8 @@ export class ComboTranslatorService {
           for (let j = 0; j < specialInput.length; j++) {
             result.push(maps[specialInput[j]]);
           }
-        } else if (specialInput.length === 1 && !this.isDirectionalInput(specialInput[0])) {
+        } else if (specialInput.length === 1 && !this.directionalInputs.includes(specialInput[0])) {
           result.push(maps[specialInput[0]]);
-
-          if (this.isDirectionalInput(specialInput[0][0])) {
-            continue;
-          }
 
         }
       }
