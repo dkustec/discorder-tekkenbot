@@ -29,6 +29,8 @@ export class UserInputComponent implements OnInit{
 
       if (combo) {
         this.userInput = combo;
+        console.log(combo);
+        
       }
     });
   }
@@ -42,7 +44,7 @@ export class UserInputComponent implements OnInit{
   onShareButtonClick() {
     Swal.fire("Copied to clipboard!");
 
-    let normalizedToUrl = this.userInput.replace(/ /g, "%20");
+    let normalizedToUrl = this.userInput.replace(/ /g, "%20").replace(/\+/g, "%2B");
     let url = `https://tekkenconverter.netlify.app?combo=${normalizedToUrl}`;
     
     navigator.clipboard.writeText(url);
