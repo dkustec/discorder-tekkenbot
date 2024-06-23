@@ -64,7 +64,6 @@ export class ComboTranslatorService {
   private directionalInputs = ["f", "b", "u", "d", "F", "B", "U", "D", "df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private diagonalInputs = ["df", "db", "uf", "ub", "dF", "dB", "uF", "uB"];
   private numberInputs = ["1", "2", "3", "4"];
-  private validDirectionConnectors = ["/"];
   private possibleChars = ["w", "c", "s", "h", "q", "i", "+", "/", ",", "{", "}"]
   private possibleSpecialInputs = ["ws", "iws", "bt", "dash", "ssl", "ssr", "ss", "ch", "hb", "wr", "cd", "qcf", "qcb", "hcb", "hcf"];
   private specialInputsMappings: { [key: string]: string[] } = {
@@ -90,10 +89,6 @@ export class ComboTranslatorService {
 
   private isDirectionalInput(input: string): boolean {
     return this.directionalInputs.includes(input);
-  }
-
-  private isDirectionalConnector(input: string): boolean {
-    return this.validDirectionConnectors.includes(input);
   }
 
   private isNumberInput(input: string): boolean {
@@ -168,7 +163,92 @@ export class ComboTranslatorService {
     }
   }
 
-  // TODO: break this method down into smaller functions
+  private handleDirectionalInput(curString: string, curIndex: number): [string, number] {
+    let result = curString[curIndex];
+    let indexOffset = 0;
+    const connector = "/";
+    
+    // convert to diagonal ex: df, db, uf, ub, dF, dB, uF, uB
+    if (curIndex + 1 < curString.length && this.isDirectionalInput(curString[curIndex + 1])) {
+      let concat = curString[curIndex] + curString[curIndex + 1];
+
+      if (this.isDiagonalInput(concat)) {
+        result = concat;
+        indexOffset = 1;
+      } else {
+        result = curString[curIndex];
+      }
+    }
+
+    // forward slash notation ex: d/f, d/b, u/f, u/b, d/F, d/B, u/F, u/B
+    if (curIndex + 1 < curString.length && curString[curIndex + 1] === connector) {
+      if (curIndex + 2 < curString.length && this.isDirectionalInput(curString[curIndex + 2])) {
+        let concat = curString[curIndex] + curString[curIndex + 2];
+
+        indexOffset = 2;
+        if (this._comboMappings[concat]) {
+          result = concat;
+        } else {
+          result = curString[curIndex];
+        }
+      }
+    }
+
+    return [result, indexOffset];
+  }
+
+  private handleNumberInput(curString: string, curIndex: number): [string[], number] {
+    let result: string[] = [];
+    let indexOffset = 0;
+
+    // tilde notation ex: 1~2, 2~3, 3~4, 1~4
+    if (curIndex + 1 < curString.length && curString[curIndex + 1] === "~") {
+      let next = curString[curIndex + 2];
+      let prev = curString[curIndex];
+
+      result.push("bracketL");
+      result.push(prev);
+      result.push(next);
+      result.push("bracketR");
+      indexOffset = 2;
+
+      return [result, indexOffset];
+    }
+
+    let plusCount = 0;
+    let i = curIndex;
+    let temp = curString[i];
+
+    while (i + 2 < curString.length && curString[i + 1] === "+") {
+      plusCount++;
+      let prev = curString[i];
+      let next = curString[i + 2];
+      
+      if (Number(next) < Number(prev)) {
+        return [["error"], 0];
+      }
+
+      if (plusCount > 3) {
+        console.log(plusCount);
+        
+        return [["error"], 0];
+      }
+
+      temp += "+";
+      temp += next;
+
+      i += 2;
+      indexOffset += 2;
+    }
+
+    if (temp.length > 0) {
+      result.push(temp);
+      return [result, indexOffset];
+    }
+
+    return [result, indexOffset];
+  }
+
   public translateCombo(combo: string): void {
     const maps = this._comboMappings;
 
@@ -196,6 +276,13 @@ export class ComboTranslatorService {
         result.push(maps["error"]);
       }
 
+      if (cur === "{") { // custom command
+        let [customCommand, offset] = this.handleCustomCommand(combo, i);
+        i += offset;
+        result.push(customCommand);
+      }
+
+
       if (this.isPossibleSpecialInput(cur.toLowerCase())) {
         let [specialInput, offset] = this.handleSpecialInputs(combo.substring(i).toLowerCase(), i, cur.toLowerCase());
         i += offset;
@@ -212,75 +299,18 @@ export class ComboTranslatorService {
       }
 
       if (this.isDirectionalInput(cur)) {
-        if (i + 1 < combo.length && this.isDirectionalInput(combo[i + 1])) {
-          let concat = cur + combo[i + 1];
+        let [directionalInput, offset] = this.handleDirectionalInput(combo, i);
+        i += offset;
 
-          if (this.isDiagonalInput(concat)) {
-            result.push(maps[concat]);
-          } else {
-            result.push(maps[cur]);
-            result.push(maps[combo[i + 1]]);
-          }
-          i++;
-        } else if (i + 1 < combo.length && this.isDirectionalConnector(combo[i + 1])) {
-          if (i + 2 < combo.length && this.isDirectionalInput(combo[i + 2])) {
-            let concat = cur + combo[i + 2];
-
-            i += 2;
-            if (maps[concat]) {
-              result.push(maps[concat]);
-            } else {
-              result.push(maps[cur]);
-            }
-          }
-        } else {
-          result.push(maps[cur]);
-        }
+        result.push(maps[directionalInput]);
       } 
 
-      if(cur === "{") { // custom command
-        let [customCommand, offset] = this.handleCustomCommand(combo, i);
-        i += offset;
-        result.push(customCommand);
-      }
-
       if (this.isNumberInput(cur)) {
-        if (i + 1 < combo.length && combo[i + 1] === "~") { // press very quickly, ex: 1~2
-          if (i + 2 < combo.length && this.isNumberInput(combo[i + 2])) {
-            result.push(maps["bracketL"]);
-            result.push(maps[cur]);
-            result.push(maps[combo[i + 2]]);
-            result.push(maps["bracketR"]);
-            i += 2;
-            continue;
-          } 
-        }
+        let [numberInput, offset] = this.handleNumberInput(combo, i);
+        i += offset;
 
-        let str = cur;
-        let plusCount = 0;
-        let isInvalid = false;
-
-        while (i + 1 < combo.length && combo[i + 1] === "+" && i + 2 != combo.length) {
-          plusCount++;
-          let prev = combo[i];
-          i += 2;
-          str += "+" + combo[i];
-
-          if (Number(prev) > Number(combo[i])) {
-            isInvalid = true;
-            break;
-          }
-
-          if (plusCount > 3) {
-            isInvalid = true;
-            break;
-          }
-        }
-
-        if (isInvalid) {
-          result.push(maps["error"]);
-        } else {
-          result.push(maps[str]);
+        for (let j = 0; j < numberInput.length; j++) {
+          result.push(maps[numberInput[j]]);
         }
       }
     } 
