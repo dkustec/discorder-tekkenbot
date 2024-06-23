@@ -47,4 +47,9 @@ export class UserInputComponent implements OnInit{
     
     navigator.clipboard.writeText(url);
   }
+
+  onColorButtonClick() {
+    this._comboService.toggleColor();
+    this._comboService.translateCombo(this.userInput);
+  }
 }

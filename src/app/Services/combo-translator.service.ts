@@ -6,42 +6,43 @@ import { Injectable, signal } from '@angular/core';
 export class ComboTranslatorService {
   private isColor = false;
   private colorImg = this.isColor ? "Tekken7" : "Tekken8"
+  private isSvg = this.isColor ? ".svg" : ".png"
   private basePath = `../../../assets/Images/${this.colorImg}/`;
 
   private _comboMappings: { [key: string]: string } = {
-    "f": `${this.basePath}f.png`,
-    "b": `${this.basePath}b.png`,
-    "u": `${this.basePath}u.png`,
-    "d": `${this.basePath}d.png`,
-    "df": `${this.basePath}df.png`,
-    "db": `${this.basePath}db.png`,
-    "uf": `${this.basePath}uf.png`,
-    "ub": `${this.basePath}ub.png`,
-    "dF": `${this.basePath}dfhold.png`,
-    "dB": `${this.basePath}dbhold.png`,
-    "uF": `${this.basePath}ufhold.png`,
-    "uB": `${this.basePath}ubhold.png`,
-    "n": `${this.basePath}n.png`,
-    "1": `${this.basePath}1.png`,
-    "2": `${this.basePath}2.png`,
-    "3": `${this.basePath}3.png`,
-    "4": `${this.basePath}4.png`,
-    "1+2": `${this.basePath}1+2.png`,
-    "1+3": `${this.basePath}1+3.png`,
-    "1+4": `${this.basePath}1+4.png`,
-    "2+3": `${this.basePath}2+3.png`,
-    "2+4": `${this.basePath}2+4.png`,
-    "3+4": `${this.basePath}3+4.png`,
-    "1+2+3": `${this.basePath}1+2+3.png`,
-    "1+2+4": `${this.basePath}1+2+4.png`,
-    "1+3+4": `${this.basePath}1+3+4.png`,
-    "2+3+4": `${this.basePath}2+3+4.png`,
-    "1+2+3+4": `${this.basePath}1+2+3+4.png`,
-    "F": `${this.basePath}fhold.png`,
-    "B": `${this.basePath}bhold.png`,
-    "U": `${this.basePath}uhold.png`,
-    "D": `${this.basePath}dhold.png`,
-    // global commands
+    "1": `${this.basePath}1${this.isSvg}`,
+    "2": `${this.basePath}2${this.isSvg}`,
+    "3": `${this.basePath}3${this.isSvg}`,
+    "4": `${this.basePath}4${this.isSvg}`,
+    "1+2": `${this.basePath}1+2${this.isSvg}`,
+    "1+3": `${this.basePath}1+3${this.isSvg}`,
+    "1+4": `${this.basePath}1+4${this.isSvg}`,
+    "2+3": `${this.basePath}2+3${this.isSvg}`,
+    "2+4": `${this.basePath}2+4${this.isSvg}`,
+    "3+4": `${this.basePath}3+4${this.isSvg}`,
+    "1+2+3": `${this.basePath}1+2+3${this.isSvg}`,
+    "1+2+4": `${this.basePath}1+2+4${this.isSvg}`,
+    "1+3+4": `${this.basePath}1+3+4${this.isSvg}`,
+    "2+3+4": `${this.basePath}2+3+4${this.isSvg}`,
+    "1+2+3+4": `${this.basePath}1+2+3+4${this.isSvg}`,
+    // game independent
+    "f": "../../../assets/Images/f.png", 
+    "b": `../../../assets/Images/b.png`,
+    "u": `../../../assets/Images/u.png`,
+    "d": `../../../assets/Images/d.png`,
+    "df": `../../../assets/Images/df.png`,
+    "db": `../../../assets/Images/db.png`,
+    "uf": `../../../assets/Images/uf.png`,
+    "ub": `../../../assets/Images/ub.png`,
+    "dF": `../../../assets/Images/dfhold.png`,
+    "dB": `../../../assets/Images/dbhold.png`,
+    "uF": `../../../assets/Images/ufhold.png`,
+    "uB": `../../../assets/Images/ubhold.png`,
+    "n": `../../../assets/Images/n.png`,
+    "F": `../../../assets/Images/fhold.png`,
+    "B": `../../../assets/Images/bhold.png`,
+    "U": `../../../assets/Images/uhold.png`,
+    "D": `../../../assets/Images/dhold.png`,
     "!": "../../../assets/Images/tornado.png",
     "ch": "../../../assets/Images/CH.png",
     "ss": "../../../assets/Images/SS.png",
@@ -86,6 +87,20 @@ export class ComboTranslatorService {
   };
 
   constructor() { }
+
+  public toggleColor(): void {
+    this.isColor = !this.isColor;
+    this.colorImg = this.isColor ? "Tekken7" : "Tekken8";
+    this.isSvg = this.isColor ? ".svg" : ".png";
+    this.basePath = `../../../assets/Images/${this.colorImg}/`;
+    console.log(this._comboMappings["1"]);
+
+    for (let key in this._comboMappings) {
+      if (key === "1" || key === "2" || key === "3" || key === "4" || key === "1+2" || key === "1+3" || key === "1+4" || key === "2+3" || key === "2+4" || key === "3+4" || key === "1+2+3" || key === "1+2+4" || key === "1+3+4" || key === "2+3+4" || key === "1+2+3+4") {
+        this._comboMappings[key] = `${this.basePath}${key}${this.isSvg}`;
+      }
+    }
+  }
 
   private isDirectionalInput(input: string): boolean {
     return this.directionalInputs.includes(input);
@@ -224,7 +239,7 @@ export class ComboTranslatorService {
       let prev = curString[i];
       let next = curString[i + 2];
       
-      if (Number(next) < Number(prev)) {
+      if (Number(next) <= Number(prev)) {
         return [["error"], 0];
       }
 
