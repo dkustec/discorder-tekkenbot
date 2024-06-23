@@ -16,6 +16,7 @@ export class UserInputComponent implements OnInit{
   private _comboService;
   userInput: string = "";
   _activatedRoute;
+  isColorActive = false;
   
 
   constructor(ComboTranslatorService: ComboTranslatorService, route: ActivatedRoute) {
@@ -51,5 +52,6 @@ export class UserInputComponent implements OnInit{
   onColorButtonClick() {
     this._comboService.toggleColor();
     this._comboService.translateCombo(this.userInput);
+    this.isColorActive = !this.isColorActive;
   }
 }
