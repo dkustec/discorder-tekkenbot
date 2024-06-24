@@ -1,5 +1,5 @@
 # Tekken Input Converter
-An easy way to visualize your combos.
+An easy way to visualize and share your combos.
 <br>
 https://tekkenconverter.netlify.app/
 
