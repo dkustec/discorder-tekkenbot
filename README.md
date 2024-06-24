@@ -1,5 +1,6 @@
 # Tekken Input Converter
-
+An easy way to visualize your combos.
+<br>
 https://tekkenconverter.netlify.app/
 
 # Directional Inputs
