@@ -1,4 +1,5 @@
 <div class="input-container">
+    <img class="help-btn" src="../../../assets/question.svg" (click)="onHelpButtonClick()" height="50px" width="50px">
     <input type="text" [(ngModel)]="userInput" (input)="onInput($event)">
     <img class="share-btn" src="../../../assets/share.svg" (click)="onShareButtonClick()" height="50px" width="50px">
     @if (isColorActive === false) {

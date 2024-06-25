@@ -54,4 +54,8 @@ export class UserInputComponent implements OnInit{
     this._comboService.translateCombo(this.userInput);
     this.isColorActive = !this.isColorActive;
   }
+
+  onHelpButtonClick() {
+    window.open("https://github.com/guipleit/Tekken-input-converter/blob/main/README.md");
+  }
 }

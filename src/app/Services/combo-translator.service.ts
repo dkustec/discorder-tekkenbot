@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -93,10 +93,9 @@ export class ComboTranslatorService {
     this.colorImg = this.isColor ? "Tekken7" : "Tekken8";
     this.isSvg = this.isColor ? ".svg" : ".png";
     this.basePath = `../../../assets/Images/${this.colorImg}/`;
-    console.log(this._comboMappings["1"]);
 
     for (let key in this._comboMappings) {
-      if (key === "1" || key === "2" || key === "3" || key === "4" || key === "1+2" || key === "1+3" || key === "1+4" || key === "2+3" || key === "2+4" || key === "3+4" || key === "1+2+3" || key === "1+2+4" || key === "1+3+4" || key === "2+3+4" || key === "1+2+3+4") {
+      if (this.numberInputs.includes(key)) {
         this._comboMappings[key] = `${this.basePath}${key}${this.isSvg}`;
       }
     }
@@ -244,8 +243,6 @@ export class ComboTranslatorService {
       }
 
       if (plusCount > 3) {
-        console.log(plusCount);
-        
         return [["error"], 0];
       }
 

@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ComboOutputComponent implements OnInit {
   private _comboService;
   private _activatedRoute;
-  images = computed(() => this._comboService.imageArray());
+  public images = computed(() => this._comboService.imageArray());
 
   constructor(
     comboTranslatorService: ComboTranslatorService,
